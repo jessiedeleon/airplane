@@ -1,0 +1,47 @@
+*{
+	padding:0px;
+	margin:0px;
+}
+#playground{
+	background-image: url("../images/background.jpg");	
+	width: 560px;
+}
+.col{
+	display: inline-block;
+}
+.row{
+	height: 50px;
+	width: 50px;
+}
+.player.active{
+	/*background-color: blue;*/
+	height: 50px;
+	width: 50px;
+	background-image: url("../images/airplane.png");
+	background-size: 100%;	
+}
+.enemy.active{
+	/*background-color: red;*/
+	height: 50px;
+	width: 50px;
+	background-image: url("../images/enemy.png");
+	background-size: 100%;	
+	background-repeat: no-repeat;
+
+}
+.attack.active{
+	/*background-color: red;*/
+	height: 50px;
+	width: 50px;
+	background-image: url("../images/missile.png");
+	background-size: 100%;	
+	background-repeat: no-repeat;
+}
+.attack.impact{
+	/*background-color: red;*/
+	height: 50px;
+	width: 50px;
+	background-image: url("../images/impact.gif") !important;
+	background-size: 100% !important;	
+	background-repeat: no-repeat !important;
+}
