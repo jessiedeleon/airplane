@@ -87,8 +87,10 @@ window.onload = function(){
 
 	new_player = new Player();
 	var playaudio  = new PlaySettings();
-
-	playaudio.playSound("audio_bg");
+	
+	setTimeout(function(){
+		playaudio.playSound("audio_bg");
+	}, 500)
 
 
 	//AI movements spawn
