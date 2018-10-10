@@ -1,13 +1,24 @@
 let new_player: any;
 
 window.onload = function(){
-	
 
-	class Player {
-		playerName: string;
-		constructor(public firstName: string, public lastName: string){
-			this.playerName = firstName  + ' ' + lastName;
+	class PlaySettings{
+		public playSettings(element_id:any, tile:any, index:any, action:any, classname:any) {
+			if(action == "add") {
+				document.getElementById(element_id).children[tile].children[index].classList.add(classname);
+			}else if(action == "remove") {
+				document.getElementById(element_id).children[tile].children[index].classList.remove(classname);
+			}
 		}
+		public playSound(audioId:any){
+			let audioPlayer: HTMLMediaElement = <HTMLAudioElement>document.getElementById(audioId);
+			audioPlayer.load();
+			audioPlayer.play();
+		}
+	}
+
+	class Player extends PlaySettings{
+		playerName: string;
 		xGrid: number = 10;
 		yGrid: number = 10;
 		position: number = 5;
@@ -20,46 +31,49 @@ window.onload = function(){
 				if(key == 37 && currentPos > 0){ // move left
 					this.position--;
 
-					playSettings(column + currentPos, this.xGrid - 1, 0, "remove", "active");  // remove class active to plager
-					playSettings(column + this.position, this.xGrid - 1, 0, "add", "active");  // add class active to player
+					this.playSettings(column + currentPos, this.xGrid - 1, 0, "remove", "active");  // remove class active to plager
+					this.playSettings(column + this.position, this.xGrid - 1, 0, "add", "active");  // add class active to player
 				}else if(key == 39 && currentPos < this.yGrid - 1){ // move right
 					this.position++;
 
-					playSettings(column + currentPos, this.xGrid - 1, 0, "remove", "active");  // remove class active to plager
-					playSettings(column + this.position, this.xGrid - 1, 0, "add", "active");  // add class active to player
+					this.playSettings(column + currentPos, this.xGrid - 1, 0, "remove", "active");  // remove class active to plager
+					this.playSettings(column + this.position, this.xGrid - 1, 0, "add", "active");  // add class active to player
 				}else if(key == 32){ // attack
-
-					document.getElementById("audio_attack").play();
+					this.playSound("audio_attack");
 
 					var tile : number = this.xGrid - 2;
 					var max_playground : number = this.xGrid - 2;
 
+					// variable for setinterval to use
+					let playS = this.playSettings;
+					let playSound = this.playSound;
+
 					var interval: any = setInterval(function(){ 
 						if(tile < max_playground){
-							playSettings(column + currentPos, tile + 1, 1, "remove", "active");
+							playS(column + currentPos, tile + 1, 1, "remove", "active");
 						}
 
-						playSettings(column + currentPos, tile, 1, "add", "active");
+						playS(column + currentPos, tile, 1, "add", "active");
 						
 						if(document.getElementById('col-'+currentPos).children[tile].children[0].className.indexOf("active") != -1){
 							//Enemy detected, destroy enemy
-							playSettings(column + currentPos, tile, 0, "remove", "active");
-							playSettings(column + currentPos, tile, 1, "add", "impact");
+							playS(column + currentPos, tile, 0, "remove", "active");
+							playS(column + currentPos, tile, 1, "add", "impact");
 
 							setTimeout(function(){
-								playSettings(column + currentPos, tile + 1, 1, "remove", "impact");
+								playS(column + currentPos, tile + 1, 1, "remove", "impact");
 							}, 500);
 
 							//remove attack when colided with enemy
 							clearInterval(interval);
-							playSettings(column + currentPos, tile, 1, "remove", "active");
-							document.getElementById("audio_explosion").play();
+							playS(column + currentPos, tile, 1, "remove", "active");
+							playSound("audio_explosion");
 						}
 						
 						if(tile == 0){
 							clearInterval(interval);
 							setTimeout(function(){
-								playSettings(column + currentPos, 0, 1, "remove", "active");
+								playS(column + currentPos, 0, 1, "remove", "active");
 							},500);
 						}
 						else{
@@ -71,15 +85,19 @@ window.onload = function(){
 		}
 	}
 
-	new_player = new Player("Jessie", "de Leon");
-	document.getElementById("audio_bg").play();
-	
+	new_player = new Player();
+	var playaudio  = new PlaySettings();
+
+	playaudio.playSound("audio_bg");
+
+
 	//AI movements spawn
 	setInterval(function(){ 
 		var rand: number = Math.floor((Math.random() * 10) + 1);
 		var	column: number = rand -1;
-		playSettings("col-" + column, 0, 0, "add", "active");
-		// document.getElementById('col-'+test).children[0].children[0].classList.add("active");
+		var playS = new PlaySettings();
+		playS.playSettings("col-" + column, 0, 0, "add", "active");
+		// document.getElementById('col-'+column).children[0].children[0].classList.add("active");
 	}, 1000);
 
 	// Speed of enemy going down
@@ -99,15 +117,6 @@ window.onload = function(){
 			}
 		}
 	}, 2000);
-
-	// Play Settings
-	function playSettings(element_id:any, tile:any, index:any, action:any, classname:any) {
-		if(action == "add") {
-			document.getElementById(element_id).children[tile].children[index].classList.add(classname);
-		}else if(action == "remove") {
-			document.getElementById(element_id).children[tile].children[index].classList.remove(classname);
-		}
-	}
 }
 
 document.addEventListener("keydown", function(event){
